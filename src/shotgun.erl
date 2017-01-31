@@ -518,7 +518,12 @@ wait_response({gun_response, _Pid, _StreamRef, nofin, StatusCode, Headers},
               gen_fsm:reply(From, Result),
               receive_chunk;
           _ ->
-              receive_data
+            case lists:keyfind(<<"content-type">>, 1, Headers) of
+              {_, <<"text/event-stream", _Charset/binary>>} ->
+                receive_chunk;
+              _ ->
+                receive_data
+            end
       end,
     { next_state
     , StateName
