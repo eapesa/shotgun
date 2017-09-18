@@ -692,7 +692,11 @@ is_chunked(Headers) ->
 
 -spec is_event_stream([proplists:property()]) -> boolean().
 is_event_stream(Headers) ->
-    <<"text/event-stream">> =:= keyfind(<<"content-type">>, Headers).
+    Match = binary:match(keyfind(<<"content-type">>, Headers), <<"text/event-stream">>),
+    case Match of
+        nomatch    -> false;
+        _WithMatch -> true
+    end.
 
 %% @private
 keyfind(Key, List) ->
